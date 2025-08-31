@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
+    <title>API Key 批量检测工具</title>
+    <style>
+        /* [保留原始 CSS 样式] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 暗色主题样式 */
+        .dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .dark-theme .container {
+            background: linear-gradient(135deg, #232741 0%, #1e1e2e 100%);
+            color: #e8eaed;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .header {
+            background: linear-gradient(135deg, #232741 0%, #1e1e2e 100%);
+        }
+
+        .dark-theme .input-section {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .input-section:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 4px 20px rgba(76, 99, 210, 0.15);
+        }
+
+        .dark-theme .form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+            border-color: #3c4269;
+        }
+
+        .dark-theme .form-control:focus {
+            border-color: #4c63d2;
+            box-shadow: 0 0 0 3px rgba(76, 99, 210, 0.1);
+        }
+
+        .dark-theme .form-control:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #252849 0%, #2a2d47 100%);
+        }
+
+        .dark-theme select.form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+        }
+
+        .dark-theme select.form-control option {
+            background: #232741;
+            color: #e8eaed;
+        }
+
+        .dark-theme input.form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+        }
+
+        .dark-theme textarea.form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+        }
+
+        .dark-theme .stat-card {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .stat-card:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(76, 99, 210, 0.2);
+        }
+
+        .dark-theme .key-list {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .key-list:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 2px 12px rgba(76, 99, 210, 0.15);
+        }
+
+        .dark-theme .empty-state {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .empty-icon {
+            opacity: 0.5;
+        }
+
+        .dark-theme .empty-text {
+            opacity: 0.7;
+        }
+
+        .dark-theme .key-item {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .key-item:hover {
+            background: linear-gradient(135deg, #2a2d47 0%, #1e1e2e 100%);
+            border-color: #4c63d2;
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(76, 99, 210, 0.15);
+        }
+
+        .dark-theme .tab {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .tab.active {
+            color: #4c63d2;
+        }
+
+        .dark-theme .alert {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+            color: #e8eaed;
+        }
+
+        .dark-theme .alert:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 2px 12px rgba(76, 99, 210, 0.2);
+        }
+
+        .dark-theme .btn-secondary {
+            background: linear-gradient(135deg, #3c4269 0%, #2a2d47 100%);
+        }
+
+        .dark-theme .btn-secondary:hover {
+            background: linear-gradient(135deg, #4a5079 0%, #3c4269 100%);
+        }
+
+        .dark-theme .form-help {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .stat-label {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .input-group label {
+            color: #e8eaed;
+        }
+
+        .dark-theme .detected-models {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .detected-models:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 2px 12px rgba(76, 99, 210, 0.2);
+        }
+
+        .dark-theme .detected-models-header {
+            border-bottom-color: #3c4269;
+        }
+
+        .dark-theme .detected-models-header:hover {
+            background: rgba(76, 99, 210, 0.1);
+        }
+
+        .dark-theme .detected-models-header h4 {
+            color: #4c63d2;
+        }
+
+        .dark-theme .collapse-icon {
+            color: #4c63d2;
+        }
+
+        .dark-theme .model-tag {
+            background: #4c63d2;
+        }
+
+        .dark-theme .model-tag:hover {
+            background: #3c52d2;
+        }
+
+        .dark-theme .model-toggle-btn {
+            background: #3c4269;
+        }
+
+        .dark-theme .model-toggle-btn:hover {
+            background: #4a5079;
+        }
+
+        .dark-theme .model-toggle-btn.active {
+            background: #4c63d2;
+        }
+
+        .dark-theme .concurrency-container {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .concurrency-container:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+        }
+
+        .dark-theme .concurrency-input-section .form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #4c63d2;
+            border-color: #3c4269;
+        }
+
+        .dark-theme .concurrency-input-section .form-control:focus {
+            border-color: #4c63d2;
+            box-shadow: 0 0 0 3px rgba(76, 99, 210, 0.1);
+        }
+
+        .dark-theme .slider {
+            background: #3c4269;
+        }
+
+        .dark-theme .slider::-webkit-slider-thumb {
+            background: #4c63d2;
+        }
+
+        .dark-theme .slider::-webkit-slider-thumb:hover {
+            background: #3c52d2;
+        }
+
+        .dark-theme .slider::-moz-range-thumb {
+            background: #4c63d2;
+        }
+
+        .dark-theme .slider-value {
+            color: #4c63d2;
+            background: #232741;
+            border-color: #3c4269;
+        }
+
+        .dark-theme .preset-btn {
+            border-color: #4c63d2;
+            color: #4c63d2;
+            background: #232741;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .preset-btn:hover {
+            background: #4c63d2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 99, 210, 0.3);
+        }
+
+        .dark-theme .preset-btn.active {
+            background: #4c63d2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 99, 210, 0.4);
+        }
+
+        /* 深色主题重试相关样式 */
+        .dark-theme .retry-container {
+            background: linear-gradient(135deg, #3d3314 0%, #2d2a1a 100%);
+            border-color: #5d4e23;
+        }
+
+        .dark-theme .retry-container:hover {
+            border-color: #d68910;
+            background: linear-gradient(135deg, #4d4024 0%, #3d3314 100%);
+        }
+
+        .dark-theme .retry-input-section .form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #d68910;
+            border-color: #5d4e23;
+        }
+
+        .dark-theme .retry-input-section .form-control:focus {
+            border-color: #d68910;
+            box-shadow: 0 0 0 3px rgba(214, 137, 16, 0.1);
+        }
+
+        .dark-theme .retry-slider {
+            background: #5d4e23;
+        }
+
+        .dark-theme .retry-slider::-webkit-slider-thumb {
+            background: #d68910;
+        }
+
+        .dark-theme .retry-slider::-webkit-slider-thumb:hover {
+            background: #b7791f;
+        }
+
+        .dark-theme .retry-slider::-moz-range-thumb {
+            background: #d68910;
+        }
+
+        .dark-theme .retry-slider-value {
+            color: #d68910;
+            background: #232741;
+            border-color: #5d4e23;
+        }
+
+        .dark-theme .retry-preset-btn {
+            border-color: #d68910;
+            color: #d68910;
+            background: #232741;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .retry-preset-btn:hover {
+            background: #d68910;
+            color: white;
+            box-shadow: 0 4px 12px rgba(214, 137, 16, 0.3);
+        }
+
+        .dark-theme .retry-preset-btn.active {
+            background: #d68910;
+            color: white;
+            box-shadow: 0 4px 12px rgba(214, 137, 16, 0.4);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 8px;
+            font-weight: 700;
+            word-break: break-word;
+        }
+        
+        .header p {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .input-section:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #495057;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control:hover {
+            border-color: #667eea;
+            background: #fafbff;
+        }
+        
+        .form-control.textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(12px, 2vw, 14px);
+        }
+        
+        .form-help {
+            color: #6c757d;
+            font-size: clamp(10px, 1.8vw, 12px);
+            margin-top: 4px;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .model-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .model-input-group .form-control {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .model-toggle-btn {
+            padding: 12px 12px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: clamp(12px, 2vw, 14px);
+            white-space: nowrap;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .model-toggle-btn:hover {
+            background: #5a6268;
+        }
+
+        .model-toggle-btn.active {
+            background: #667eea;
+        }
+
+        .detected-models {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .detected-models:hover {
+            border-color: #2196f3;
+            background: #e1f5fe;
+            box-shadow: 0 2px 12px rgba(33, 150, 243, 0.15);
+        }
+
+        .detected-models-header {
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #bbdefb;
+            transition: background 0.3s ease;
+        }
+
+        .detected-models-header:hover {
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .detected-models-header h4 {
+            margin: 0;
+            color: #1976d2;
+            font-size: clamp(12px, 2vw, 14px);
+        }
+
+        .collapse-icon {
+            color: #1976d2;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .model-list-container {
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .model-list-container.expanded {
+            display: block;
+        }
+
+        .model-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .model-tag {
+            background: #2196f3;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: clamp(10px, 1.8vw, 12px);
+            cursor: pointer;
+            transition: background 0.3s ease;
+            word-break: break-all;
+        }
+
+        .model-tag:hover {
+            background: #1976d2;
+        }
+
+        /* 并发设置样式 - 移动端优化 */
+        .concurrency-container {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 16px;
+            background: #f1f3f5;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .concurrency-container:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .concurrency-input-section {
+            flex-shrink: 0;
+            min-width: 80px;
+        }
+
+        .concurrency-input-section .form-control {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+            background: white;
+            border: 2px solid #dee2e6;
+        }
+
+        .concurrency-input-section .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .slider-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #dee2e6;
+            outline: none;
+            transition: background 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #5a67d8;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .slider-value {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 700;
+            color: #667eea;
+            font-size: clamp(14px, 2.5vw, 18px);
+            background: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            flex-shrink: 0;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 8px 12px;
+            border: 1px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: clamp(11px, 2vw, 13px);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .preset-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 重试设置样式 */
+        .retry-container {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 16px;
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .retry-container:hover {
+            border-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .retry-input-section {
+            flex-shrink: 0;
+            min-width: 80px;
+        }
+
+        .retry-input-section .form-control {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            color: #f39c12;
+            background: white;
+            border: 2px solid #ffeaa7;
+        }
+
+        .retry-input-section .form-control:focus {
+            border-color: #f39c12;
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+        }
+
+        .retry-slider-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .retry-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .retry-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #ffeaa7;
+            outline: none;
+            transition: background 0.3s ease;
+        }
+
+        .retry-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #f39c12;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 2px 6px rgba(243, 156, 18, 0.3);
+        }
+
+        .retry-slider::-webkit-slider-thumb:hover {
+            background: #e67e22;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+        }
+
+        .retry-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #f39c12;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(243, 156, 18, 0.3);
+        }
+
+        .retry-slider-value {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 700;
+            color: #f39c12;
+            font-size: clamp(14px, 2.5vw, 18px);
+            background: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ffeaa7;
+            flex-shrink: 0;
+        }
+
+        .retry-preset-buttons {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .retry-preset-btn {
+            padding: 8px 12px;
+            border: 1px solid #f39c12;
+            background: white;
+            color: #f39c12;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: clamp(11px, 2vw, 13px);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .retry-preset-btn:hover {
+            background: #f39c12;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+        }
+
+        .retry-preset-btn.active {
+            background: #f39c12;
+            color: white;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-detect {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-detect:hover {
+            background: #218838;
+        }
+        
+        .results-section {
+            margin-top: 20px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        }
+        
+        .stat-number {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+        
+        .valid { color: #28a745; }
+        .invalid { color: #dc3545; }
+        .rate-limited { color: #ffc107; }
+        .testing { color: #6f42c1; }
+        .retrying { color: #fd7e14; }
+        .total { color: #6f42c1; }
+        
+        .results-tabs {
+            display: flex;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab {
+            padding: 10px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: clamp(12px, 2.2vw, 16px);
+            font-weight: 600;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .key-list {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 350px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            -webkit-overflow-scrolling: touch;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .key-list:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 2px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-height: 80px;
+            color: #6c757d;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
+
+        .empty-text {
+            font-size: clamp(14px, 2.5vw, 16px);
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        
+        .key-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .key-item:hover {
+            border-color: #667eea;
+            background: #fafbff;
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+        
+        .key-text {
+            font-family: 'Courier New', monospace;
+            font-size: clamp(11px, 2vw, 14px);
+            color: #495057;
+            flex: 1;
+            margin-right: 8px;
+            word-break: break-all;
+            line-height: 1.4;
+            min-width: 0;
+        }
+        
+        .key-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: clamp(10px, 1.8vw, 12px);
+            font-weight: 600;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        
+        .status-valid {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-rate-limited {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-testing {
+            background: #e2e3e5;
+            color: #6c757d;
+        }
+
+        .status-retrying {
+            background: #ffeaa7;
+            color: #d68910;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+        
+        .copy-btn {
+            padding: 10px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: clamp(12px, 2vw, 14px);
+            margin-top: 12px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        .alert {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            color: #0c5460;
+            transition: all 0.3s ease;
+            font-size: clamp(12px, 2vw, 14px);
+            line-height: 1.4;
+        }
+
+        .alert:hover {
+            border-color: #17a2b8;
+            background: #c3e6ea;
+            box-shadow: 0 2px 12px rgba(23, 162, 184, 0.15);
+        }
+
+        /* 主题切换按钮 */
+        .theme-controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* 移动端特殊优化 */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                border-radius: 15px;
+                margin: 0;
+            }
+            
+            .header {
+                padding: 16px;
+            }
+            
+            .main-content {
+                padding: 16px;
+            }
+            
+            .input-section {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .model-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .model-toggle-btn {
+                width: 100%;
+                margin-top: 8px;
+            }
+            
+            .concurrency-container, .retry-container {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+                align-items: stretch;
+            }
+            
+            .concurrency-input-section, .retry-input-section {
+                align-self: center;
+                min-width: auto;
+            }
+            
+            .concurrency-input-section .form-control, .retry-input-section .form-control {
+                width: 100px;
+                margin: 0 auto;
+            }
+            
+            .slider-section, .retry-slider-section {
+                width: 100%;
+            }
+            
+            .preset-buttons, .retry-preset-buttons {
+                gap: 4px;
+                margin-top: 8px;
+            }
+            
+            .preset-btn, .retry-preset-btn {
+                min-width: 60px;
+                max-width: none;
+                flex: 1;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .stat-card {
+                padding: 12px 8px;
+            }
+            
+            .results-tabs {
+                gap: 4px;
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            .key-list {
+                padding: 12px;
+                max-height: 300px;
+            }
+            
+            .key-item {
+                padding: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            
+            .key-text {
+                margin-right: 0;
+                width: 100%;
+            }
+            
+            .key-status {
+                align-self: flex-end;
+            }
+            
+            .theme-controls {
+                top: 8px;
+                right: 8px;
+                gap: 6px;
+            }
+            
+            .control-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .alert {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* 深色主题 */
+        .dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .dark-theme .container {
+            background: linear-gradient(135deg, #232741 0%, #1e1e2e 100%);
+            color: #e8eaed;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .header {
+            background: linear-gradient(135deg, #232741 0%, #1e1e2e 100%);
+        }
+
+        .dark-theme .input-section {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .input-section:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 4px 20px rgba(76, 99, 210, 0.15);
+        }
+
+        .dark-theme .form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+            border-color: #3c4269;
+        }
+
+        .dark-theme .form-control:focus {
+            border-color: #4c63d2;
+            box-shadow: 0 0 0 3px rgba(76, 99, 210, 0.1);
+        }
+
+        .dark-theme .form-control:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #252849 0%, #2a2d47 100%);
+        }
+
+        .dark-theme select.form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+        }
+
+        .dark-theme select.form-control option {
+            background: #232741;
+            color: #e8eaed;
+        }
+
+        .dark-theme input.form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+        }
+
+        .dark-theme textarea.form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #e8eaed;
+        }
+
+        .dark-theme .form-help {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .stat-label {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .input-group label {
+            color: #e8eaed;
+        }
+
+        .dark-theme .stat-card {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .stat-card:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(76, 99, 210, 0.2);
+        }
+
+        .dark-theme .key-list {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .key-list:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 2px 12px rgba(76, 99, 210, 0.15);
+        }
+
+        .dark-theme .empty-state {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .empty-icon {
+            opacity: 0.5;
+        }
+
+        .dark-theme .empty-text {
+            opacity: 0.7;
+        }
+
+        .dark-theme .key-item {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .key-item:hover {
+            background: linear-gradient(135deg, #2a2d47 0%, #1e1e2e 100%);
+            border-color: #4c63d2;
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(76, 99, 210, 0.15);
+        }
+
+        .dark-theme .tab {
+            color: #b0b3c1;
+        }
+
+        .dark-theme .tab.active {
+            color: #4c63d2;
+        }
+
+        .dark-theme .results-tabs {
+            border-bottom-color: #3c4269;
+        }
+
+        .dark-theme .alert {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+            color: #e8eaed;
+        }
+
+        .dark-theme .alert:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 2px 12px rgba(76, 99, 210, 0.2);
+        }
+
+        .dark-theme .btn-secondary {
+            background: linear-gradient(135deg, #3c4269 0%, #2a2d47 100%);
+        }
+
+        .dark-theme .btn-secondary:hover {
+            background: linear-gradient(135deg, #4a5079 0%, #3c4269 100%);
+        }
+
+        .dark-theme .detected-models {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .detected-models:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+            box-shadow: 0 2px 12px rgba(76, 99, 210, 0.2);
+        }
+
+        .dark-theme .detected-models-header {
+            border-bottom-color: #3c4269;
+        }
+
+        .dark-theme .detected-models-header:hover {
+            background: rgba(76, 99, 210, 0.1);
+        }
+
+        .dark-theme .detected-models-header h4 {
+            color: #4c63d2;
+        }
+
+        .dark-theme .collapse-icon {
+            color: #4c63d2;
+        }
+
+        .dark-theme .model-tag {
+            background: #4c63d2;
+        }
+
+        .dark-theme .model-tag:hover {
+            background: #3c52d2;
+        }
+
+        .dark-theme .model-toggle-btn {
+            background: #3c4269;
+        }
+
+        .dark-theme .model-toggle-btn:hover {
+            background: #4a5079;
+        }
+
+        .dark-theme .model-toggle-btn.active {
+            background: #4c63d2;
+        }
+
+        .dark-theme .concurrency-container {
+            background: linear-gradient(135deg, #2a2d47 0%, #232741 100%);
+            border-color: #3c4269;
+        }
+
+        .dark-theme .concurrency-container:hover {
+            border-color: #4c63d2;
+            background: linear-gradient(135deg, #323556 0%, #2a2d47 100%);
+        }
+
+        .dark-theme .concurrency-input-section .form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #4c63d2;
+            border-color: #3c4269;
+        }
+
+        .dark-theme .concurrency-input-section .form-control:focus {
+            border-color: #4c63d2;
+            box-shadow: 0 0 0 3px rgba(76, 99, 210, 0.1);
+        }
+
+        .dark-theme .slider {
+            background: #3c4269;
+        }
+
+        .dark-theme .slider::-webkit-slider-thumb {
+            background: #4c63d2;
+        }
+
+        .dark-theme .slider::-webkit-slider-thumb:hover {
+            background: #3c52d2;
+        }
+
+        .dark-theme .slider::-moz-range-thumb {
+            background: #4c63d2;
+        }
+
+        .dark-theme .slider-value {
+            color: #4c63d2;
+            background: #232741;
+            border-color: #3c4269;
+        }
+
+        .dark-theme .preset-btn {
+            border-color: #4c63d2;
+            color: #4c63d2;
+            background: #232741;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .preset-btn:hover {
+            background: #4c63d2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 99, 210, 0.3);
+        }
+
+        .dark-theme .preset-btn.active {
+            background: #4c63d2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 99, 210, 0.4);
+        }
+
+        /* 深色主题重试相关样式 */
+        .dark-theme .retry-container {
+            background: linear-gradient(135deg, #3d3314 0%, #2d2a1a 100%);
+            border-color: #5d4e23;
+        }
+
+        .dark-theme .retry-container:hover {
+            border-color: #d68910;
+            background: linear-gradient(135deg, #4d4024 0%, #3d3314 100%);
+        }
+
+        .dark-theme .retry-input-section .form-control {
+            background: linear-gradient(135deg, #1e1e2e 0%, #232741 100%);
+            color: #d68910;
+            border-color: #5d4e23;
+        }
+
+        .dark-theme .retry-input-section .form-control:focus {
+            border-color: #d68910;
+            box-shadow: 0 0 0 3px rgba(214, 137, 16, 0.1);
+        }
+
+        .dark-theme .retry-slider {
+            background: #5d4e23;
+        }
+
+        .dark-theme .retry-slider::-webkit-slider-thumb {
+            background: #d68910;
+        }
+
+        .dark-theme .retry-slider::-webkit-slider-thumb:hover {
+            background: #b7791f;
+        }
+
+        .dark-theme .retry-slider::-moz-range-thumb {
+            background: #d68910;
+        }
+
+        .dark-theme .retry-slider-value {
+            color: #d68910;
+            background: #232741;
+            border-color: #5d4e23;
+        }
+
+        .dark-theme .retry-preset-btn {
+            border-color: #d68910;
+            color: #d68910;
+            background: #232741;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .retry-preset-btn:hover {
+            background: #d68910;
+            color: white;
+            box-shadow: 0 4px 12px rgba(214, 137, 16, 0.3);
+        }
+
+        .dark-theme .retry-preset-btn.active {
+            background: #d68910;
+            color: white;
+            box-shadow: 0 4px 12px rgba(214, 137, 16, 0.4);
+        }
+
+        /* 浅色主题滚动条样式 */
+        .model-list-container::-webkit-scrollbar,
+        .results-tabs::-webkit-scrollbar,
+        .key-list::-webkit-scrollbar,
+        #apiKeys::-webkit-scrollbar,
+        #apiUrls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .model-list-container::-webkit-scrollbar-track,
+        .results-tabs::-webkit-scrollbar-track,
+        .key-list::-webkit-scrollbar-track,
+        #apiKeys::-webkit-scrollbar-track,
+        #apiUrls::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .model-list-container::-webkit-scrollbar-thumb,
+        .results-tabs::-webkit-scrollbar-thumb,
+        .key-list::-webkit-scrollbar-thumb,
+        #apiKeys::-webkit-scrollbar-thumb,
+        #apiUrls::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .model-list-container::-webkit-scrollbar-thumb:hover,
+        .results-tabs::-webkit-scrollbar-thumb:hover,
+        .key-list::-webkit-scrollbar-thumb:hover,
+        #apiKeys::-webkit-scrollbar-thumb:hover,
+        #apiUrls::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* 深色主题滚动条样式 */
+        .dark-theme .model-list-container::-webkit-scrollbar,
+        .dark-theme .results-tabs::-webkit-scrollbar,
+        .dark-theme .key-list::-webkit-scrollbar,
+        .dark-theme #apiKeys::-webkit-scrollbar,
+        .dark-theme #apiUrls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .dark-theme .model-list-container::-webkit-scrollbar-track,
+        .dark-theme .results-tabs::-webkit-scrollbar-track,
+        .dark-theme .key-list::-webkit-scrollbar-track,
+        .dark-theme #apiKeys::-webkit-scrollbar-track,
+        .dark-theme #apiUrls::-webkit-scrollbar-track {
+            background: #1e1e2e;
+            border-radius: 4px;
+        }
+
+        .dark-theme .model-list-container::-webkit-scrollbar-thumb,
+        .dark-theme .results-tabs::-webkit-scrollbar-thumb,
+        .dark-theme .key-list::-webkit-scrollbar-thumb,
+        .dark-theme #apiKeys::-webkit-scrollbar-thumb,
+        .dark-theme #apiUrls::-webkit-scrollbar-thumb {
+            background: #4c63d2;
+            border-radius: 4px;
+        }
+
+        .dark-theme .model-list-container::-webkit-scrollbar-thumb:hover,
+        .dark-theme .results-tabs::-webkit-scrollbar-thumb:hover,
+        .dark-theme .key-list::-webkit-scrollbar-thumb:hover,
+        .dark-theme #apiKeys::-webkit-scrollbar-thumb:hover,
+        .dark-theme #apiUrls::-webkit-scrollbar-thumb:hover {
+            background: #5a73e0;
+        }
+
+        /* 粘贴按钮样式 */
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        .paste-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .paste-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .paste-btn:active {
+            transform: scale(0.95);
+        }
+
+        .dark-theme .paste-btn {
+            background: #2a2d47;
+            border-color: #3c4269;
+            color: #e8eaed;
+        }
+
+        .dark-theme .paste-btn:hover {
+            background: #323556;
+            border-color: #4c63d2;
+        }
+
+        /* 标签和导入按钮样式 */
+        .label-with-import {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .import-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .import-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .import-btn:active {
+            transform: scale(0.95);
+        }
+
+        .dark-theme .import-btn {
+            background: #2a2d47;
+            border-color: #3c4269;
+            color: #e8eaed;
+        }
+
+        .dark-theme .import-btn:hover {
+            background: #323556;
+            border-color: #4c63d2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主题切换控制按钮 -->
+    <div class="theme-controls">
+        <button class="control-btn" id="langBtn" title="切换语言">🌐</button>
+        <button class="control-btn" id="themeBtn" title="切换主题">🌙</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 data-lang-key="title">🔑 API Key 批量检测工具</h1>
+            <p data-lang-key="subtitle">批量检测多个 API URL 的模型和密钥有效性</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <div class="label-with-import">
+                        <label for="apiEntries" data-lang-key="api-entries">API URL 和密钥 (每行一组)</label>
+                        <button class="import-btn" id="importBtn" title="导入文件">📁</button>
+                    </div>
+                    <div class="textarea-wrapper">
+                        <textarea id="apiEntries" class="form-control textarea" data-lang-key="api-entries-placeholder" placeholder="请输入 API URL 和密钥, 用空格或逗号分隔, 例如:&#10;https://api.openai.com/v1 sk-xxxxxxxx&#10;https://your-proxy.com/v1,sk-yyyyyyyy&#10;..."></textarea>
+                        <button class="paste-btn" id="pasteBtn" title="粘贴">📋</button>
+                    </div>
+                    <input type="file" id="fileInput" accept=".txt" style="display: none;">
+                    <small class="form-help" data-lang-key="api-entries-help">每行一组URL和密钥。支持 OpenAI, Claude, Gemini 的代理地址。</small>
+                </div>
+                
+                <div class="alert">
+                    <strong data-lang-key="usage-title">💡 使用说明：</strong> 
+                    <br><span data-lang-key="usage-1">• 强烈建议使用自己的反向代理URL，公共代理可能不稳定。</span>
+                    <br><span data-lang-key="usage-2">• 程序会自动判断URL类型 (OpenAI/Claude/Gemini)。</span>
+                    <br><span data-lang-key="usage-3">• 测试过程中密钥仅用于验证，不会被存储。</span>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-detect" id="detectModelsBtn" data-lang-key="detect-models">获取模型</button>
+                    <button class="btn btn-primary" id="startBtn" data-lang-key="start-test">开始测试</button>
+                    <button class="btn btn-secondary" id="dedupeBtn" data-lang-key="dedupe-keys">去重密钥</button>
+                    <button class="btn btn-secondary" id="clearBtn" data-lang-key="clear">清空</button>
+                </div>
+            </div>
+
+            <!-- 模型展示和选择区域将在这里动态生成 -->
+            <div id="models-display-section"></div>
+            
+            <div class="progress-bar hidden" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="loading hidden" id="loading">
+                <div class="spinner"></div>
+                <p id="loading-text" data-lang-key="testing">正在测试 API 密钥...</p>
+            </div>
+            
+            <div class="results-section hidden" id="resultsSection">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number total" id="totalCount">0</div>
+                        <div class="stat-label" data-lang-key="total">总计</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number valid" id="validCount">0</div>
+                        <div class="stat-label" data-lang-key="valid">有效</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number invalid" id="invalidCount">0</div>
+                        <div class="stat-label" data-lang-key="invalid">无效</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number rate-limited" id="rateLimitedCount">0</div>
+                        <div class="stat-label" data-lang-key="rate-limited">速率限制</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number testing" id="testingCount">0</div>
+                        <div class="stat-label" data-lang-key="testing-label">测试中</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number retrying" id="retryingCount">0</div>
+                        <div class="stat-label" data-lang-key="retrying">重试中</div>
+                    </div>
+                </div>
+                
+                <div class="results-tabs">
+                    <button class="tab active" data-tab="all" data-lang-key="all">全部</button>
+                    <button class="tab" data-tab="valid" data-lang-key="valid-keys">有效密钥</button>
+                    <button class="tab" data-tab="invalid" data-lang-key="invalid-keys">无效密钥</button>
+                    <button class="tab" data-tab="rate-limited" data-lang-key="rate-limited-keys">速率限制</button>
+                </div>
+                
+                <div class="tab-content active" id="allTab">
+                    <div class="key-list" id="allKeys"></div>
+                    <button class="copy-btn" data-copy="all" data-lang-key="copy-all">复制全部</button>
+                </div>
+                
+                <div class="tab-content" id="validTab">
+                    <div class="key-list" id="validKeys"></div>
+                    <button class="copy-btn" data-copy="valid" data-lang-key="copy-valid">复制有效密钥</button>
+                </div>
+                
+                <div class="tab-content" id="invalidTab">
+                    <div class="key-list" id="invalidKeys"></div>
+                    <button class="copy-btn" data-copy="invalid" data-lang-key="copy-invalid">复制无效密钥</button>
+                </div>
+                
+                <div class="tab-content" id="rateLimitedTab">
+                    <div class="key-list" id="rateLimitedKeys"></div>
+                    <button class="copy-btn" data-copy="rate-limited" data-lang-key="copy-rate-limited">复制速率限制密钥</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let allKeysData = [];
+        let currentLang = 'zh';
+        let isDarkTheme = false;
+        let modelsByUrl = {}; // 存储每个URL获取的模型和类型: { url: { type: 'openai', models: [] } }
+        let isTestingInProgress = false;
+        let shouldCancelTesting = false;
+        let completedCount = 0;
+        let totalTests = 0;
+        let updateTimer = null;
+
+        const translations = {
+            zh: {
+                'title': '🔑 API Key 批量检测工具',
+                'subtitle': '批量检测多个 API URL 的模型和密钥有效性',
+                'api-entries': 'API URL 和密钥 (每行一组)',
+                'api-entries-placeholder': '请输入 API URL 和密钥, 用空格或逗号分隔, 例如:\nhttps://api.openai.com/v1 sk-xxxxxxxx\nhttps://your-proxy.com/v1,sk-yyyyyyyy\n...',
+                'api-entries-help': '每行一组URL和密钥。支持 OpenAI, Claude, Gemini 的代理地址。',
+                'usage-title': '💡 使用说明：',
+                'usage-1': '• 强烈建议使用自己的反向代理URL，公共代理可能不稳定。',
+                'usage-2': '• 程序会自动判断URL类型 (OpenAI/Claude/Gemini)。',
+                'usage-3': '• 测试过程中密钥仅用于验证，不会被存储。',
+                'detect-models': '获取模型',
+                'start-test': '开始测试',
+                'cancel-test': '取消测试',
+                'dedupe-keys': '去重密钥',
+                'clear': '清空',
+                'testing': '正在测试 API 密钥...',
+                'fetching-models': '正在获取模型...',
+                'total': '总计',
+                'valid': '有效',
+                'invalid': '无效',
+                'rate-limited': '速率限制',
+                'testing-label': '测试中',
+                'retrying': '重试中',
+                'all': '全部',
+                'valid-keys': '有效密钥',
+                'invalid-keys': '无效密钥',
+                'rate-limited-keys': '速率限制',
+                'copy-all': '复制全部',
+                'copy-valid': '复制有效密钥',
+                'copy-invalid': '复制无效密钥',
+                'copy-rate-limited': '复制速率限制密钥',
+                'status-valid': '有效',
+                'status-invalid': '无效',
+                'status-rate-limited': '速率限制',
+                'status-testing': '测试中',
+                'status-pending': '待定',
+                'status-retrying': '重试中'
+            },
+            en: {
+                'title': '🔑 API Key Bulk Tester',
+                'subtitle': 'Batch test models and key validity for multiple API URLs',
+                'api-entries': 'API URL & Key (one pair per line)',
+                'api-entries-placeholder': 'Enter API URL and Key, separated by a space or comma, e.g.:\nhttps://api.openai.com/v1 sk-xxxxxxxx\nhttps://your-proxy.com/v1,sk-yyyyyyyy\n...',
+                'api-entries-help': 'One URL/Key pair per line. Supports proxies for OpenAI, Claude, Gemini.',
+                'usage-title': '💡 Usage Instructions:',
+                'usage-1': '• Strongly recommend using your own reverse proxy URL; public proxies can be unstable.',
+                'usage-2': '• The application will automatically determine the URL type (OpenAI/Claude/Gemini).',
+                'usage-3': '• Keys are only used for validation during testing and are not stored.',
+                'detect-models': 'Fetch Models',
+                'start-test': 'Start Test',
+                'cancel-test': 'Cancel Test',
+                'dedupe-keys': 'Dedupe Keys',
+                'clear': 'Clear',
+                'testing': 'Testing API keys...',
+                'fetching-models': 'Fetching models...',
+                'total': 'Total',
+                'valid': 'Valid',
+                'invalid': 'Invalid',
+                'rate-limited': 'Rate Limited',
+                'testing-label': 'Testing',
+                'retrying': 'Retrying',
+                'all': 'All',
+                'valid-keys': 'Valid Keys',
+                'invalid-keys': 'Invalid Keys',
+                'rate-limited-keys': 'Rate Limited',
+                'copy-all': 'Copy All',
+                'copy-valid': 'Copy Valid Keys',
+                'copy-invalid': 'Copy Invalid Keys',
+                'copy-rate-limited': 'Copy Rate Limited Keys',
+                'status-valid': 'Valid',
+                'status-invalid': 'Invalid',
+                'status-rate-limited': 'Rate Limited',
+                'status-testing': 'Testing',
+                 'status-pending': 'Pending',
+                'status-retrying': 'Retrying'
+            }
+        };
+
+        // --- Core Logic ---
+
+        function parseApiEntries() {
+            const entriesText = document.getElementById('apiEntries').value.trim();
+            if (!entriesText) return [];
+
+            return entriesText.split('\n')
+                .map(line => line.trim())
+                .filter(Boolean)
+                .map(line => {
+                    const match = line.match(/^(\S+)\s*[,|\s]\s*(.+)$/);
+                    if (match && match[1].startsWith('http')) {
+                        return { url: match[1], key: match[2].trim() };
+                    }
+                    return null;
+                }).filter(Boolean);
+        }
+
+        async function detectAllModels() {
+            const entries = parseApiEntries();
+            if (entries.length === 0) {
+                alert(currentLang === 'zh' ? '请输入有效的 API URL 和密钥对。' : 'Please enter valid API URL and key pairs.');
+                return;
+            }
+
+            setLoadingState(true, 'fetching-models');
+            modelsByUrl = {}; // Reset models
+
+            const uniqueEntries = entries.filter((entry, index, self) =>
+                index === self.findIndex(e => e.url === entry.url)
+            );
+            
+            const promises = uniqueEntries.map(async ({ url, key }) => {
+                const result = await getAvailableModels(key, url);
+                if (result.models.length > 0) {
+                    modelsByUrl[url] = result;
+                } else {
+                    modelsByUrl[url] = { type: 'unknown', models: ['- N/A -'] };
+                }
+            });
+            await Promise.all(promises);
+
+            setLoadingState(false);
+            displayModels();
+        }
+
+        async function getAvailableModels(apiKey, url) {
+            let models = await getOpenAIModels(apiKey, url);
+            if (models.length > 0) return { type: 'openai', models };
+
+            models = await getGeminiModels(apiKey, url);
+            if (models.length > 0) return { type: 'gemini', models };
+            
+            // Fallback for Claude, which has no public model list endpoint
+            return {
+                type: 'claude',
+                models: [
+                    'claude-3-5-sonnet-20240620',
+                    'claude-3-opus-20240229',
+                    'claude-3-sonnet-20240229',
+                    'claude-3-haiku-20240307'
+                ]
+            };
+        }
+
+        async function getOpenAIModels(apiKey, baseUrl) {
+            try {
+                const response = await fetch(`${baseUrl}/models`, {
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                });
+                if (!response.ok) return [];
+                const data = await response.json();
+                return data.data.map(m => m.id).filter(id => !id.includes('embed') && !id.includes('vision') && !id.includes('tts') && !id.includes('whisper')).sort();
+            } catch (e) {
+                return [];
+            }
+        }
+
+        async function getGeminiModels(apiKey, baseUrl) {
+             try {
+                const modelsUrl = new URL(baseUrl);
+                modelsUrl.pathname = modelsUrl.pathname.replace(/\/$/, '') + '/models';
+                modelsUrl.searchParams.set('key', apiKey);
+
+                const response = await fetch(modelsUrl.toString());
+
+                if (!response.ok) return [];
+                const data = await response.json();
+
+                return data.models
+                    .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+                    .map(m => m.name.replace('models/', ''))
+                    .sort();
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function displayModels() {
+            const container = document.getElementById('models-display-section');
+            container.innerHTML = '';
+
+            const urlKeys = Object.keys(modelsByUrl);
+            if (urlKeys.length === 0) {
+                container.innerHTML = `<div class="alert">${currentLang === 'zh' ? '未获取到模型。请检查您的URL和API密钥。' : 'No models fetched. Please check your URLs and API Key.'}</div>`;
+                return;
+            }
+
+            urlKeys.forEach(url => {
+                const { type, models } = modelsByUrl[url];
+                const urlGroup = document.createElement('div');
+                urlGroup.className = 'input-section model-group';
+                
+                let modelsHTML = models.map((model, index) => {
+                    const id = `model-${url.replace(/[^a-zA-Z0-9]/g, '')}-${index}`;
+                    return `
+                        <div class="model-checkbox-item">
+                            <input type="checkbox" id="${id}" value="${model}" data-url="${url}" data-type="${type}">
+                            <label for="${id}">${model}</label>
+                        </div>
+                    `;
+                }).join('');
+
+                urlGroup.innerHTML = `
+                    <h4>${url} <span class="api-type-badge">${type}</span></h4>
+                    <div class="model-selection-controls">
+                        <button class="btn btn-sm btn-secondary" onclick="selectAllModels(this, true)">${currentLang === 'zh' ? '全选' : 'Select All'}</button>
+                        <button class="btn btn-sm btn-secondary" onclick="selectAllModels(this, false)">${currentLang === 'zh' ? '全不选' : 'Deselect All'}</button>
+                    </div>
+                    <div class="model-checkbox-container">${modelsHTML}</div>
+                `;
+                container.appendChild(urlGroup);
+            });
+            
+            const style = document.getElementById('dynamic-styles') || document.createElement('style');
+            style.id = 'dynamic-styles';
+            style.textContent = `
+                .model-group { margin-top: 20px; }
+                .model-checkbox-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; margin-top: 10px; }
+                .model-checkbox-item { display: flex; align-items: center; background: #f0f4ff; padding: 5px; border-radius: 5px; }
+                .model-checkbox-item input { margin-right: 8px; }
+                .model-selection-controls { display: flex; gap: 8px; margin-top: 8px; }
+                .btn-sm { padding: 4px 8px; font-size: 12px; }
+                .api-type-badge { background-color: #667eea; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; vertical-align: middle; }
+                .dark-theme .model-checkbox-item { background: #2a2d47; }
+                .dark-theme .api-type-badge { background-color: #4c63d2; }
+                .key-details-container { font-size: 11px; margin-top: 4px; color: #6c757d; max-height: 100px; overflow-y: auto; padding-left: 10px;}
+                .dark-theme .key-details-container { color: #b0b3c1; }
+                .key-result-detail.valid { color: #28a745 !important; }
+                .key-result-detail.invalid { color: #dc3545 !important; }
+                .key-result-detail.rate-limited { color: #ffc107 !important; }
+            `;
+            document.head.appendChild(style);
+        }
+
+        window.selectAllModels = function(button, select) {
+            const container = button.closest('.model-group').querySelector('.model-checkbox-container');
+            container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = select;
+            });
+        }
+        
+        async function startTesting() {
+            if (isTestingInProgress) {
+                shouldCancelTesting = true;
+                const startBtn = document.getElementById('startBtn');
+                startBtn.disabled = true;
+                startBtn.textContent = "Cancelling...";
+                return;
+            }
+
+            const entries = parseApiEntries();
+            if (entries.length === 0) {
+                alert(currentLang === 'zh' ? '请输入有效的 API URL 和密钥对！' : 'Please enter valid API URL and key pairs!');
+                return;
+            }
+            
+            const selectedModels = Array.from(document.querySelectorAll('.model-checkbox-container input:checked')).map(cb => ({
+                model: cb.value,
+                url: cb.dataset.url,
+                type: cb.dataset.type
+            }));
+
+            if (selectedModels.length === 0) {
+                alert(currentLang === 'zh' ? '请至少选择一个模型进行测试！' : 'Please select at least one model to test!');
+                return;
+            }
+
+            isTestingInProgress = true;
+            shouldCancelTesting = false;
+            
+            const tasks = [];
+            for (const sm of selectedModels) {
+                const entriesForUrl = entries.filter(e => e.url === sm.url);
+                for (const entry of entriesForUrl) {
+                    tasks.push({ key: entry.key, model: sm.model, url: sm.url, type: sm.type });
+                }
+            }
+            const uniqueTasks = tasks.filter((task, index, self) =>
+                index === self.findIndex(t => t.key === task.key && t.model === task.model && t.url === task.url)
+            );
+            
+            completedCount = 0;
+            totalTests = uniqueTasks.length;
+            
+            const startBtn = document.getElementById('startBtn');
+            startBtn.textContent = translations[currentLang]['cancel-test'];
+            startBtn.disabled = false;
+
+            document.getElementById('progressBar').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+
+            const uniqueKeys = [...new Set(entries.map(e => e.key))];
+            allKeysData = uniqueKeys.map(key => ({ key, status: 'pending', results: {} }));
+
+            updateStats();
+            updateKeyLists();
+            updateProgress();
+
+            const concurrencyLimit = 5;
+            const taskQueue = [...uniqueTasks];
+            
+            const worker = async () => {
+                while (taskQueue.length > 0) {
+                    if (shouldCancelTesting) return;
+                    const task = taskQueue.shift();
+                    const result = await testApiKey(task.key, task.url, task.model, task.type);
+                    
+                    const keyData = allKeysData.find(k => k.key === task.key);
+                    if (keyData) {
+                         keyData.results[`${task.url}|${task.model}`] = result;
+                    }
+                    
+                    completedCount++;
+                    updateProgress();
+                    updateUIAsync();
+                }
+            };
+
+            const workers = Array(concurrencyLimit).fill(null).map(worker);
+            await Promise.all(workers);
+
+            isTestingInProgress = false;
+            
+            if (shouldCancelTesting) {
+                alert("Test cancelled.");
+            }
+
+            startBtn.textContent = translations[currentLang]['start-test'];
+            startBtn.disabled = false;
+            document.getElementById('progressBar').classList.add('hidden');
+        }
+
+        async function testApiKey(key, url, model, type) {
+            try {
+                let response;
+                let body;
+                let headers = { 'Content-Type': 'application/json' };
+                let finalUrl = new URL(url);
+
+                if (type === 'openai') {
+                    headers['Authorization'] = `Bearer ${key}`;
+                    body = { model, messages: [{role: 'user', content: 'hi'}], max_tokens: 1, stream: false };
+                    finalUrl.pathname = finalUrl.pathname.replace(/\/$/, '') + '/chat/completions';
+                } else if (type === 'gemini') {
+                    body = { contents: [{ parts: [{ text: "hi" }] }] };
+                    finalUrl.pathname = finalUrl.pathname.replace(/\/$/, '') + `/models/${model}:generateContent`;
+                    finalUrl.searchParams.set('key', key);
+                } else { // claude
+                    headers['x-api-key'] = key;
+                    headers['anthropic-version'] = '2023-06-01';
+                    body = { model, max_tokens: 1, messages: [{role: 'user', content: 'hi'}]};
+                    finalUrl.pathname = finalUrl.pathname.replace(/\/$/, '') + '/messages';
+                }
+                
+                response = await fetch(finalUrl.toString(), { method: 'POST', headers, body: JSON.stringify(body) });
+
+                if (response.ok) return { status: 'valid' };
+                if (response.status === 429) return { status: 'rate-limited', error: '429' };
+                return { status: 'invalid', error: `${response.status}` };
+
+            } catch (e) {
+                return { status: 'invalid', error: 'Network Error' };
+            }
+        }
+        
+        function updateProgress() {
+            const progress = totalTests > 0 ? (completedCount / totalTests) * 100 : 0;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        function updateUIAsync() {
+            if (updateTimer) return;
+            updateTimer = setTimeout(() => {
+                updateKeyLists();
+                updateStats();
+                updateTimer = null;
+            }, 200);
+        }
+
+        function updateStats() {
+            let validKeys = new Set();
+            let invalidKeys = new Set();
+            let rateLimitedKeys = new Set();
+            
+            allKeysData.forEach(keyData => {
+                const statuses = Object.values(keyData.results).map(r => r.status);
+                if (statuses.includes('valid')) {
+                    validKeys.add(keyData.key);
+                    invalidKeys.delete(keyData.key);
+                    rateLimitedKeys.delete(keyData.key);
+                } else if (statuses.length > 0 && statuses.every(s => s === 'invalid')) {
+                    if (!validKeys.has(keyData.key)) invalidKeys.add(keyData.key);
+                } else if (statuses.includes('rate-limited')) {
+                    if (!validKeys.has(keyData.key)) rateLimitedKeys.add(keyData.key);
+                }
+            });
+
+            document.getElementById('totalCount').textContent = allKeysData.length;
+            document.getElementById('validCount').textContent = validKeys.size;
+            document.getElementById('invalidCount').textContent = invalidKeys.size;
+            document.getElementById('rateLimitedCount').textContent = rateLimitedKeys.size;
+        }
+
+        function updateKeyLists() {
+            const valid = [], invalid = [], rateLimited = [];
+            
+            allKeysData.forEach(keyData => {
+                const statuses = new Set(Object.values(keyData.results).map(r => r.status));
+                keyData.status = 'pending';
+                if (statuses.has('valid')) {
+                    keyData.status = 'valid';
+                    valid.push(keyData);
+                } else if (statuses.size > 0 && statuses.every(s => s === 'invalid')) {
+                    keyData.status = 'invalid';
+                    invalid.push(keyData);
+                } else if (statuses.has('rate-limited')) {
+                    keyData.status = 'rate-limited';
+                    rateLimited.push(keyData);
+                }
+            });
+
+            updateKeyListDOM('allKeys', allKeysData);
+            updateKeyListDOM('validKeys', valid);
+            updateKeyListDOM('invalidKeys', invalid);
+            updateKeyListDOM('rateLimitedKeys', rateLimited);
+        }
+
+        function updateKeyListDOM(elementId, keys) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            if (keys.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">${currentLang === 'zh' ? '无密钥' : 'No keys'}</div></div>`;
+                return;
+            }
+            keys.forEach(keyData => {
+                const item = document.createElement('div');
+                item.className = 'key-item';
+                
+                let summaryClass = `status-${keyData.status}`;
+                let summaryText = translations[currentLang][`status-${keyData.status}`] || keyData.status;
+                if(Object.keys(keyData.results).length === 0) {
+                     summaryText = 'Pending';
+                     summaryClass = 'status-pending';
+                }
+
+
+                let details = Object.entries(keyData.results).map(([key, result]) => {
+                    const [url, model] = key.split('|');
+                    return `<div class="key-result-detail ${result.status}">${model} @ ${new URL(url).hostname}: ${result.status} ${result.error ? `(${result.error})` : ''}</div>`;
+                }).join('');
+
+                item.innerHTML = `
+                    <div class="key-text">
+                        ${keyData.key}
+                        <div class="key-details-container">${details || (isTestingInProgress ? 'Testing...' : '')}</div>
+                    </div>
+                    <div class="key-status ${summaryClass}">${summaryText}</div>`;
+                container.appendChild(item);
+            });
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('detectModelsBtn').addEventListener('click', detectAllModels);
+            document.getElementById('startBtn').addEventListener('click', startTesting);
+            document.getElementById('dedupeBtn').addEventListener('click', () => {
+                const textarea = document.getElementById('apiEntries');
+                const entries = textarea.value.split('\n').map(line => line.trim()).filter(Boolean);
+                textarea.value = [...new Set(entries)].join('\n');
+            });
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                if(isTestingInProgress) return;
+                document.getElementById('apiEntries').value = '';
+                document.getElementById('models-display-section').innerHTML = '';
+                document.getElementById('resultsSection').classList.add('hidden');
+                allKeysData = [];
+                modelsByUrl = {};
+                updateKeyLists();
+                updateStats();
+
+            });
+             document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.addEventListener('click', (e) => showTab(e.target.getAttribute('data-tab')));
+            });
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => copyKeys(e.target.getAttribute('data-copy')));
+            });
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`${tab}Tab`).classList.add('active');
+        }
+
+        function copyKeys(type) {
+            let keysToCopy;
+            switch(type) {
+                case 'valid': keysToCopy = allKeysData.filter(k => k.status === 'valid'); break;
+                case 'invalid': keysToCopy = allKeysData.filter(k => k.status === 'invalid'); break;
+                case 'rate-limited': keysToCopy = allKeysData.filter(k => k.status === 'rate-limited'); break;
+                default: keysToCopy = allKeysData;
+            }
+            const text = keysToCopy.map(k => k.key).join('\n');
+            navigator.clipboard.writeText(text).then(() => alert('Copied!'));
+        }
+
+        function initializeApp() {
+            setupEventListeners();
+            document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+            document.getElementById('langBtn').addEventListener('click', toggleLanguage);
+            updateLanguage();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                const translation = translations[currentLang][key];
+                if (translation) {
+                    if (element.placeholder) {
+                        element.placeholder = translation;
+                    } else {
+                        element.textContent = translation;
+                    }
+                }
+            });
+            displayModels();
+            updateKeyLists();
+        }
+
+        function setLoadingState(isLoading, messageKey = 'testing') {
+            const loadingEl = document.getElementById('loading');
+            const loadingTextEl = document.getElementById('loading-text');
+            if (isLoading) {
+                loadingTextEl.textContent = translations[currentLang][messageKey];
+                loadingEl.classList.remove('hidden');
+            } else {
+                loadingEl.classList.add('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            const themeBtn = document.getElementById('themeBtn');
+            if (isDarkTheme) {
+                document.body.classList.add('dark-theme');
+                themeBtn.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeBtn.textContent = '🌙';
+            }
+        }
+
+        document.getElementById('pasteBtn').addEventListener('click', async () => {
+            const text = await navigator.clipboard.readText();
+            const textarea = document.getElementById('apiEntries');
+            textarea.value += (textarea.value ? '\n' : '') + text;
+        });
+
+        document.getElementById('importBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const textarea = document.getElementById('apiEntries');
+                    textarea.value += (textarea.value ? '\n' : '') + e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        initializeApp();
+    </script>
+</body>
+</html>
